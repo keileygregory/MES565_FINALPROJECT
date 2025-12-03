@@ -2,14 +2,12 @@
 title: "Humpback whale distributions and insight into preferred oceanographic conditions in the Caribbean using passive acoustic monitoring (PAM) and an autonomous underwater vehicle (AUV)"
 author: "Keiley Gregory"
 date: today
+bibliography: references.bib
 format:
   html:
     css: style.css
     theme: flatly
     highlight-style: tango
-execute:
-  working-directory: none
-bibliography: references.bib
 ---
 
 ***COMMAND F \* FOR FIXES***
@@ -27,6 +25,14 @@ raster calculations in arc pro
 All quantitative oceanographic variables, including those measured directly by sensors on the glider (water temperature, salinity, dissolved oxygen concentration) and those calculated in ArcGIS Pro (bathymetric depth, bathymetric slope, distance to nearest shoreline), ...
 
 future research - study will use data from more missions in different areas, compare findings between missions, overall patterns, blah blah
+
+k
+
+Previous studies have established that humpback whale (*Megaptera novaeangliae*) distributions in the Caribbean are distinctly seasonal, with the majority of detections occurring in winter and early spring when this species travels south towards warm, protected waters for the breeding and calving season [@mignuccigiannoni1998].
+
+Debrot et al., 2013; Bolaños-Jiménez et al., 2021).
+
+------------------------------------------------------------------------
 
 # Humpback Whale Distributions
 
@@ -222,6 +228,9 @@ background_summary <- bind_rows(
 # Join HBK DETECTION summary df with BACKGROUND (ARC + GLD) mission summary dfs by Oceanographic_Variable col
 join_summary <- hbk_summary %>%
   left_join(background_summary, by = "Oceanographic_Variable")
+
+# Export as CSV
+write_csv(join_summary, "data/output_summary_tables/join_summary.csv")
 ```
 
 ```{r, include=FALSE}
@@ -424,7 +433,7 @@ boxplot_COMBINED
 # Faceted desnity plot
 density_COMBINED <- ggplot() +
   # BACKGROUND density (grey)
-  geom_density(data = gld_long, 
+  geom_density(data = background_long, 
                aes(x = Value, y = after_stat(density)),
                fill = "grey70",
                color = "grey65",
@@ -464,9 +473,44 @@ density_COMBINED <- ggplot() +
     axis.ticks.x = element_blank()
   )
 density_COMBINED
-
-# Export plot as PNG
-ggsave("figures/density_plot.png", density_COMBINED, width = 8, height = 6, dpi = 800)
 ```
 
 **Fig. 3.** \*WRITE CAPTION
+
+k
+
+```{r, include=FALSE}
+# Create df for seafloor morphology data
+seafloor <- hbk %>%
+  filter(!is.na(Seafloor_Morphology)) %>%
+  select(datetime_UTC, datetime_AST, Latitude, Longitude, Seafloor_Morphology, Glider_depth_m, Salinity_PSU, Oxygen_concentration_µmol_L, RASTERDEPTH_m, RASTERSLOPE_deg, NEAR_DIST_m, Nearest_Shoreline)
+
+# Print list of all unique values in Seafloor_Morphology col
+print(unique(seafloor$Seafloor_Morphology))
+#  [1] "Abyss; Abyssal mountain; Basin (large); Escarpment; Trough"  
+    # 
+#  [2] "Abyss; Abyssal mountain; Basin (large); Trough"                       
+#  [3] "Escarpment; Slope"                                                    
+#  [4] "Abyss; Abyssal mountain; Escarpment"                                  
+#  [5] "Basin (large); Escarpment; Slope"                                     
+#  [6] "Slope"                                                                
+#  [7] "Slope; Terrace"                                                       
+#  [8] "Abyss; Abyssal mountain; Basin (large); Rise"                         
+#  [9] "Abyss; Abyssal mountain; Basin (large); Canyon (shelf incising); Rise"
+# [10] "Abyss; Abyssal mountain; Basin (large); Escarpment; Rise"             
+# [11] "Abyss; Abyssal mountain; Canyon (shelf incising); Escarpment; Rise"   
+# [12] "Canyon (blind); Escarpment; Slope"                                    
+# [13] "Basin (large); Escarpment; Slope; Trough"
+
+# Basin (abyss)
+# Escarpment
+# Trough
+# Slope
+# Terrace
+# Rise
+# Canyon
+
+# Abyss = Basin (an ocean basin refers to the entire large depression that holds ocean water, while the abyssal plain (or abyss) is a specific, very flat, deep region within that basin)
+
+
+```

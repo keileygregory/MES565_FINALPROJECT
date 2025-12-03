@@ -22,7 +22,10 @@
 library(tidyverse)
 
 # Distance to Nearest Shoreline (m) --------------------------------------------
-Distance_to_Nearest_Shoreline <- read_csv("thesis_data/ARCGIS_background_conditions/arcgispro_exportedcsvs/KMLSTX2025_POINTS.csv")  # import CSV with 1 row for each point evenly spaced 100-m apart along entire KMZ mission path line AND col with calculated distance (m) from each point in the KMZ mission path to the nearest shoreline
+# import CSV with 1 row for each point evenly spaced 100-m apart along entire KMZ mission path line AND col with calculated distance (m) from each point in the KMZ mission path to the nearest shoreline
+Distance_to_Nearest_Shoreline <- read_csv("thesis_data/ARCGIS_background_conditions/arcgispro_exportedcsvs/KMLSTX2025_POINTS.csv") %>%
+  select(-ORIG_FID, -SUM_Shape_Length, -Shape_Length) %>%
+  select(ORIG_SEQ, ORIG_LEN, NEAR_FID, Nearest_Shoreline, everything())
 
 NEARDIST <- Distance_to_Nearest_Shoreline %>%
   select(
