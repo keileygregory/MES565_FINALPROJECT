@@ -62,10 +62,10 @@ library(tidyverse)
 library(lubridate)
 
 # Import background mission data
-bkg <- read_csv("/Users/keileygregory/MES565/MES565_FINAL/FIX_INTERPOLATION_CALCULATIONS_OUTLIERS/original_data_OUTLIERS/outliers_erddap_UVI2_Around_STX_20250306.csv")
+bkg <- read_csv("thesis_data/OUTLIERS_fix_interpolation_calculations/original_data_OUTLIERS/outliers_erddap_UVI2_Around_STX_20250306.csv")
 
 # Import humpback detection data with GIS calculations
-hbk <- read_csv("/Users/keileygregory/MES565/MES565_FINAL/FIX_INTERPOLATION_CALCULATIONS_OUTLIERS/original_data_OUTLIERS/outliers_GISCALC_HUWH_AroundSTX2025.csv")
+hbk <- read_csv("thesis_data/OUTLIERS_fix_interpolation_calculations/original_data_OUTLIERS/outliers_GISCALC_HUWH_AroundSTX2025.csv")
 
 # -----------------------------------------------------------------------------------------
 # PREPARE HBK DETECTION DATA
@@ -191,7 +191,7 @@ INTERP_hbk <- INTERP_hbk %>%
   )
 
 # Export HBK detection data with recalculated salinity and D.O. interpolation values as CSV
-write_csv(INTERP_hbk, "/Users/keileygregory/MES565/MES565_FINAL/docs/data/GISCALC_HUWH_AroundSTX2025.csv")
+write_csv(INTERP_hbk, "docs/data/GISCALC_HUWH_AroundSTX2025.csv")
 
 # Export BKG mission data with salinity and D.O. outliers removed
-write_csv(bkg_CLEAN, "/Users/keileygregory/MES565/MES565_FINAL/docs/data/erddap_UVI2_Around_STX_20250306.csv")
+write_csv(bkg_CLEAN, "docs/data/erddap_UVI2_Around_STX_20250306.csv")

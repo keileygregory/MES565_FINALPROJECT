@@ -1,9 +1,9 @@
 library(tidyverse)
 
-gbc <- read_csv("THESIS_DATA/arcgispro_exportedcsvs/PWCLIP_GBC15a_bathySTX2025_POINTS.csv")
+gbc <- read_csv("thesis_data/arcgispro_exportedcsvs/PWCLIP_GBC15a_bathySTX2025_POINTS.csv")
 
-usc_zip <- "THESIS_DATA/arcgispro_exportedcsvs/USC10m_bathySTX2025_POINTS.zip"
-usc_extractcsv_path <- "THESIS_DATA/arcgispro_exportedcsvs"
+usc_zip <- "thesis_data/arcgispro_exportedcsvs/USC10m_bathySTX2025_POINTS.zip"
+usc_extractcsv_path <- "thesis_data/arcgispro_exportedcsvs"
 unzip(usc_zip, exdir = usc_extractcsv_path)
 
 

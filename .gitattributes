@@ -1,8 +1,11 @@
 erddap_UVI2_Around_STX_20250306.csv filter=lfs diff=lfs merge=lfs -text
+
 docs/data/erddap_UVI2_Around_STX_20250306.csv filter=lfs diff=lfs merge=lfs -text
 
 outliers_erddap_UVI2_Around_STX_20250306.csv filter=lfs diff=lfs merge=lfs -text
-THESIS_DATA/FIX_OUTLIERS_interpolation_calculations/original_data_OUTLIERS/outliers_erddap_UVI2_Around_STX_20250306.csv filter=lfs diff=lfs merge=lfs -text
+
+thesis_data/OUTLIERS_fix_interpolation_calculations/original_data_OUTLIERS/outliers_erddap_UVI2_Around_STX_20250306.csv filter=lfs diff=lfs merge=lfs -text
 
 USC10m_bathySTX2025_POINTS.zip filter=lfs diff=lfs merge=lfs -text
-THESIS_DATA/arcgispro_exportedcsvs/USC10m_bathySTX2025_POINTS.zip filter=lfs diff=lfs merge=lfs -text
+
+thesis_data/arcgispro_exportedcsvs/USC10m_bathySTX2025_POINTS.zip filter=lfs diff=lfs merge=lfs -text

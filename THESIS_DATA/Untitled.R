@@ -22,7 +22,7 @@
 library(tidyverse)
 
 # Distance to Nearest Shoreline (m) --------------------------------------------
-Distance_to_Nearest_Shoreline <- read_csv("THESIS_DATA/arcgispro_exportedcsvs/KMLSTX2025_POINTS.csv")  # import CSV with 1 row for each point evenly spaced 100-m apart along entire KMZ mission path line AND col with calculated distance (m) from each point in the KMZ mission path to the nearest shoreline
+Distance_to_Nearest_Shoreline <- read_csv("thesis_data/arcgispro_exportedcsvs/KMLSTX2025_POINTS.csv")  # import CSV with 1 row for each point evenly spaced 100-m apart along entire KMZ mission path line AND col with calculated distance (m) from each point in the KMZ mission path to the nearest shoreline
 
 NEARDIST <- Distance_to_Nearest_Shoreline %>%
   select(
@@ -36,7 +36,7 @@ NEARDIST <- Distance_to_Nearest_Shoreline %>%
     )
 
 # Bathymetric Depth (m) --------------------------------------------------------
-Bathymetric_Depth <- read_csv("THESIS_DATA/arcgispro_exportedcsvs/GBC15a_bathySTX2025_POINTS_DD.csv")
+Bathymetric_Depth <- read_csv("thesis_data/arcgispro_exportedcsvs/GBC15a_bathySTX2025_POINTS_DD.csv")
 
 RASTERDEPTH <- Bathymetric_Depth %>%
   select(
@@ -49,7 +49,7 @@ RASTERDEPTH <- Bathymetric_Depth %>%
     )
 
 # Bathymetric Slope (°) --------------------------------------------------------
-Bathymetric_Slope <- read_csv("THESIS_DATA/arcgispro_exportedcsvs/GBC15a_slopeSTX2025_POINTS_DD.csv")
+Bathymetric_Slope <- read_csv("thesis_data/arcgispro_exportedcsvs/GBC15a_slopeSTX2025_POINTS_DD.csv")
 
 RASTERSLOPE <- Bathymetric_Slope %>%
   select(
