@@ -55,7 +55,7 @@ library(kableExtra) # optional but makes it prettier
 hbk <- read_csv("data/GISCALC_HUWH_AroundSTX2025.csv")
 
 # Import background mission data
-bkg <- read_csv("data/erddap_UVI2_Around_STX_20250306.csv")
+gld <- read_csv("data/erddap_UVI2_Around_STX_20250306.csv")
 ```
 
 ```{r, include=FALSE}
@@ -112,8 +112,8 @@ write_csv(hbk_summary, "data/output_summary_tables/hbk_summary.csv")
 ```
 
 ```{r, include=FALSE}
-# Create BACKGROUND summary table dataframe
-bkg_summary <- bkg %>%
+# Create **GLIDER** BACKGROUND summary table dataframe
+gld_summary <- gld %>%
   select("Glider_depth_m", "Water_temperature_C", "Salinity_PSU", "Oxygen_concentration_µmol_L") %>%
   pivot_longer(
     cols = everything(),
@@ -141,7 +141,7 @@ bkg_summary <- bkg %>%
     )
 
 # Reorder rows for table
-bkg_summary <- bkg_summary %>%
+gld_summary <- gld_summary %>%
   mutate(
     Oceanographic_Variable = factor(Oceanographic_Variable,
     levels = c(
@@ -155,14 +155,21 @@ bkg_summary <- bkg_summary %>%
   arrange(Oceanographic_Variable)
 
 # Export as CSV
-write_csv(bkg_summary, "data/output_summary_tables/bkg_summary.csv")
+write_csv(gld_summary, "data/output_summary_tables/gld_summary.csv")
 ```
 
 ```{r, include=FALSE}
+# Create **ARC** BACKGROUND summary table dataframe
+arc_summary <- arc %>%
+```
+
+k
+
+```{r, include=FALSE}
 # ❌❌❌❌❌❌❌❌❌ (env_var
-# Join hbk detection and bkg + arc background mission summaries by Oceanographic_Variable col
+# Join hbk detection and gld + arc background mission summaries by Oceanographic_Variable col
 join_summary <- hbk_summary %>%
-  left_join(bkg_summary %>% 
+  left_join(gld_summary %>% 
               select(
                 Oceanographic_Variable, 
                 "n Background" = n, 
@@ -173,7 +180,7 @@ join_summary <- hbk_summary %>%
 ```
 
 ```{r, include=FALSE}
-# Remove glider depth row (not included bc not really an oceanographic variable), calculate new `Difference in Means` col, rename Oceanographic_Variable col, and remove "n" and "BKG_Mean" columns + set col order
+# Remove glider depth row (not included bc not really an oceanographic variable), calculate new `Difference in Means` col, rename Oceanographic_Variable col, and remove "n" and "gld_Mean" columns + set col order
 summary_table <- join_summary %>%
   filter(Oceanographic_Variable != "Glider Depth (m)") %>%
   mutate(
@@ -252,7 +259,7 @@ env_vars <- c(
 ```{r, include=FALSE}
 # ❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌
 # Only variables that exist in background
-env_vars_bkg <- c(
+env_vars_gld <- c(
   "Water_temperature_C",
   "Salinity_PSU",
   "Oxygen_concentration_µmol_L"
@@ -260,10 +267,10 @@ env_vars_bkg <- c(
 ```
 
 ```{r, include=FALSE}
-# ❌❌❌❌❌❌❌❌❌ (env_vars_bkg)
+# ❌❌❌❌❌❌❌❌❌ (env_vars_gld)
 # # Pivot longer DETECTION data
 hbk_long <- hbk %>%
-  select(all_of(env_vars_bkg)) %>%
+  select(all_of(env_vars_gld)) %>%
   pivot_longer(
     cols = everything(),
     names_to = "Oceanographic_Variable",
@@ -283,10 +290,10 @@ hbk_long <- hbk %>%
 ```
 
 ```{r, include=FALSE}
-# ❌❌❌❌❌❌❌❌❌ (env_vars_bkg) + fix outlier ranges for new vars
+# ❌❌❌❌❌❌❌❌❌ (env_vars_gld) + fix outlier ranges for new vars
 # # Pivot longer BACKGROUND data
-bkg_long <- bkg %>%
-  select(all_of(env_vars_bkg)) %>%
+gld_long <- gld %>%
+  select(all_of(env_vars_gld)) %>%
   pivot_longer(
     cols = everything(),
     names_to = "Oceanographic_Variable",
@@ -304,7 +311,7 @@ bkg_long <- bkg %>%
 ```{r, echo=FALSE}
 # Explicitly define order of boxes in each plot (detections on left, background on right)
 hbk_long$boxorder <- factor("Detection", levels = c("Detection", "Background"))
-bkg_long$boxorder <- factor("Background", levels = c("Detection", "Background"))
+gld_long$boxorder <- factor("Background", levels = c("Detection", "Background"))
 
 # Facted box plot
 boxplot_COMBINED <- ggplot() +
@@ -317,7 +324,7 @@ boxplot_COMBINED <- ggplot() +
                position = position_nudge(x = -0.01)  # shift box slightly left
  ) +
   # BACKGROUND box (all grey, remove outliers)
-  geom_boxplot(data = bkg_long, aes(x = boxorder, y = Value),
+  geom_boxplot(data = gld_long, aes(x = boxorder, y = Value),
                fill = "grey80",
                color = "grey40",
                width = 0.9,
@@ -360,7 +367,7 @@ ggsave("figures/box_plot.png", boxplot_COMBINED, width = 8, height = 6, dpi = 80
 # Faceted desnity plot
 density_COMBINED <- ggplot() +
   # BACKGROUND density (grey)
-  geom_density(data = bkg_long, 
+  geom_density(data = gld_long, 
                aes(x = Value, y = after_stat(density)),
                fill = "grey70",
                color = "grey65",

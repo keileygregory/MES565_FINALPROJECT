@@ -89,8 +89,22 @@ arc_long <- bind_rows(
     )
 )
 
+# Rename Variable col to match hbk and gld dataframes in index.qmd
 arc_long <- arc_long %>%
   rename(Oceanographic_Variable = Variable)
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 # Create **ARC** BACKGROUND summary table dataframe
 arc_summary <- arc_long %>%
