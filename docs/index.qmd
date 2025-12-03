@@ -51,14 +51,21 @@ library(kableExtra) # optional but makes it prettier
 ```
 
 ```{r, include=FALSE}
-# Import humpback detection data with GIS calculations
+# Import humpback DETECTION data with GIS calculations
 hbk <- read_csv("data/GISCALC_HUWH_AroundSTX2025.csv")
 
-# Import background mission data
+# Import *GLIDER* BACKGROUND mission data
 gld <- read_csv("data/erddap_UVI2_Around_STX_20250306.csv")
+
+# Import *ARC* BACKGROUND mission data
+arc <- read_csv("data/arcgis_UVI2_Around_STX_20250306.csv")
 ```
 
 ```{r, include=FALSE}
+# Rename NEAR_DIST col to match arc background dataframe
+hbk <- hbk %>%
+  rename(NEAR_DIST_m = NEAR_DIST)
+
 # Create DETECTIONS summary table dataframe
 hbk_summary <- hbk %>%
   select("Glider_depth_m", "Water_temperature_C", "Salinity_PSU", "Oxygen_concentration_µmol_L", "RASTERDEPTH_m", "RASTERSLOPE_deg", "NEAR_DIST_m") %>%
@@ -159,24 +166,62 @@ write_csv(gld_summary, "data/output_summary_tables/gld_summary.csv")
 ```
 
 ```{r, include=FALSE}
-# Create **ARC** BACKGROUND summary table dataframe
+# Create **ARC** BACKGROUND summary table dataframe (note that this df does not need select() or pivot_longer() commands used for hbk and gld dataframes because it is already in long format and only has 2 columns that are both required for summary table)
 arc_summary <- arc %>%
+  group_by(Oceanographic_Variable) %>%
+  summarise(
+    n    = sum(!is.na(Value)),
+    Mean = mean(Value, na.rm = TRUE),
+    SEM  = sd(Value, na.rm = TRUE) / sqrt(n),
+    SD   = sd(Value, na.rm = TRUE),
+    Min  = min(Value, na.rm = TRUE),
+    Max  = max(Value, na.rm = TRUE),
+    .groups = "drop"
+  ) %>%
+  mutate(
+    Oceanographic_Variable = case_when(
+      Oceanographic_Variable == "RASTERDEPTH_m" ~ "Bathymetric Depth (m)",
+      Oceanographic_Variable == "RASTERSLOPE_deg" ~ "Bathymetric Slope (°)",
+      Oceanographic_Variable == "NEAR_DIST_m" ~ "Distance to Nearest Shoreline (m)",
+      TRUE ~ Oceanographic_Variable
+    )
+  )
+
+# Reorder rows for table
+arc_summary <- arc_summary %>%
+  mutate(
+    Oceanographic_Variable = factor(Oceanographic_Variable,
+    levels = c(
+      "Bathymetric Depth (m)",
+      "Bathymetric Slope (°)",
+      "Distance to Nearest Shoreline (m)"
+      )
+    )
+  ) %>%
+  arrange(Oceanographic_Variable)
+
+# Export as CSV
+write_csv(arc_summary, "data/output_summary_tables/arc_summary.csv")
 ```
 
-k
-
 ```{r, include=FALSE}
-# ❌❌❌❌❌❌❌❌❌ (env_var
-# Join hbk detection and gld + arc background mission summaries by Oceanographic_Variable col
+# Join BOTH BACKGROUND (gld_summary + arc_summary) summary table dataframes
+background_summary <- bind_rows(
+  gld_summary %>% select(Oceanographic_Variable, n, Mean, SEM, SD, Min, Max),
+  arc_summary %>% select(Oceanographic_Variable, n, Mean, SEM, SD, Min, Max)
+  ) %>%
+  rename(
+    `n Background` = n,
+    `Background Conditions Mean` = Mean,
+    `Background Conditions SEM` = SEM,
+    `Background Conditions SD` = SD,
+    `Background Conditions Min` = Min,
+    `Background Conditions Max` = Max
+  )
+
+# Join HBK DETECTION summary df with BACKGROUND (ARC + GLD) mission summary dfs by Oceanographic_Variable col
 join_summary <- hbk_summary %>%
-  left_join(gld_summary %>% 
-              select(
-                Oceanographic_Variable, 
-                "n Background" = n, 
-                "Background Conditions Mean" = Mean
-                ), 
-            by = "Oceanographic_Variable"
-            )
+  left_join(background_summary, by = "Oceanographic_Variable")
 ```
 
 ```{r, include=FALSE}
@@ -257,20 +302,34 @@ env_vars <- c(
 ```
 
 ```{r, include=FALSE}
-# ❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌
-# Only variables that exist in background
-env_vars_gld <- c(
-  "Water_temperature_C",
-  "Salinity_PSU",
-  "Oxygen_concentration_µmol_L"
-  )
+# Pivot longer DETECTION data
+hbk_long <- hbk %>%
+  select(all_of(env_vars)) %>%
+  pivot_longer(
+    cols = everything(),
+    names_to = "Oceanographic_Variable",
+    values_to = "Value"
+  ) %>%
+  mutate(
+    Oceanographic_Variable = factor(
+      Oceanographic_Variable,
+      levels = c(
+        "Water_temperature_C",
+        "Salinity_PSU",
+        "Oxygen_concentration_µmol_L",
+        "RASTERDEPTH_m",
+        "RASTERSLOPE_deg",
+        "NEAR_DIST_m"
+        )
+      )
+    ) %>%
+  filter(!is.na(Value)) # drop non-finite values
 ```
 
 ```{r, include=FALSE}
-# ❌❌❌❌❌❌❌❌❌ (env_vars_gld)
-# # Pivot longer DETECTION data
-hbk_long <- hbk %>%
-  select(all_of(env_vars_gld)) %>%
+# Pivot longer *GLIDER* BACKGROUND data
+gld_long <- gld %>%
+  select("Water_temperature_C", "Salinity_PSU", "Oxygen_concentration_µmol_L") %>%
   pivot_longer(
     cols = everything(),
     names_to = "Oceanographic_Variable",
@@ -286,32 +345,32 @@ hbk_long <- hbk %>%
         )
       )
     ) %>%
-  filter(!is.na(Value)) # drop non-finite values
-```
+  filter(!is.na(Value))  # drop non-finite values
 
-```{r, include=FALSE}
-# ❌❌❌❌❌❌❌❌❌ (env_vars_gld) + fix outlier ranges for new vars
-# # Pivot longer BACKGROUND data
-gld_long <- gld %>%
-  select(all_of(env_vars_gld)) %>%
-  pivot_longer(
-    cols = everything(),
-    names_to = "Oceanographic_Variable",
-    values_to = "Value"
-  ) %>%
+# !! DO NOT NEED TO PIVOT LONGER FOR *ARC* BACKGROUND DATA BECAUSE DF ALREADY IN LONG FORMAT
+
+# Combine GLIDER + ARC BACKGROUND long data
+background_long <- bind_rows(gld_long, arc) %>%
   mutate(
     Oceanographic_Variable = factor(
       Oceanographic_Variable,
-      levels = levels(hbk_long$Oceanographic_Variable)  # *same order as detections
+      levels = c(
+        "Water_temperature_C",
+        "Salinity_PSU",
+        "Oxygen_concentration_µmol_L",
+        "RASTERDEPTH_m",
+        "RASTERSLOPE_deg",
+        "NEAR_DIST_m"
+      )
     )
   ) %>%
-  filter(!is.na(Value)) # drop non-finite values
+  filter(!is.na(Value))  # drop non-finite values
 ```
 
 ```{r, echo=FALSE}
 # Explicitly define order of boxes in each plot (detections on left, background on right)
 hbk_long$boxorder <- factor("Detection", levels = c("Detection", "Background"))
-gld_long$boxorder <- factor("Background", levels = c("Detection", "Background"))
+background_long$boxorder <- factor("Background", levels = c("Detection", "Background"))
 
 # Facted box plot
 boxplot_COMBINED <- ggplot() +
@@ -324,12 +383,13 @@ boxplot_COMBINED <- ggplot() +
                position = position_nudge(x = -0.01)  # shift box slightly left
  ) +
   # BACKGROUND box (all grey, remove outliers)
-  geom_boxplot(data = gld_long, aes(x = boxorder, y = Value),
+  geom_boxplot(data = background_long, aes(x = boxorder, y = Value),
                fill = "grey80",
                color = "grey40",
                width = 0.9,
                alpha = 0.45,
-               outlier.shape = NA,
+               outlier.alpha = 0.7,
+               outlier.size = 1.5,
                position = position_nudge(x = 0.01)  # shift box slightly right
  ) + 
   facet_wrap(
@@ -356,9 +416,6 @@ boxplot_COMBINED <- ggplot() +
     axis.ticks.x = element_blank(),  # remove the tick marks on the x-axis
   )
 boxplot_COMBINED
-
-# Export plot as PNG
-ggsave("figures/box_plot.png", boxplot_COMBINED, width = 8, height = 6, dpi = 800)
 ```
 
 **Fig. 2.** \*WRITE CAPTION
