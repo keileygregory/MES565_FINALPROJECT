@@ -1,0 +1,281 @@
+/* ============================
+   BASE STYLES (style.css)
+   ============================ */
+
+/* --- Global body text --- */
+html, body {
+  background-color: white !important;
+  color: black !important;
+  font-size: 15px !important;
+  line-height: 1.5 !important;
+}
+
+/* Paragraphs & lists */
+body p, body li,
+.tab-pane p, .tab-pane li {
+  font-size: .98em !important;
+  line-height: 1.5 !important;
+  color: black !important;
+}
+
+/* ============================
+   INLINE CODE & CODE BLOCKS
+   ============================ */
+
+code,
+.tab-pane code {
+  color: #5f78fa !important;
+  font-size: 0.85em !important;
+  background: none !important;
+}
+
+pre code,
+div.sourceCode pre code {
+  white-space: pre-wrap !important;
+  word-break: break-word !important;
+  color: #5c02f7 !important;
+  font-size: 1em !important;
+  background-color: #f7f7f7 !important;
+  border: 0.25px solid #b5b5b5 !important;
+  padding: 8px 8px !important;
+}
+
+/* Syntax tokens */
+pre code .c, pre code .co, pre code .com, pre code .hl.com {
+  color: #a2a2e0 !important;      /* comments */
+  font-style: italic !important;
+}
+pre code .st, pre code span.s, code span.s {
+  color: #0f6475 !important;      /* strings */
+}
+pre code .dv, pre code .fl {
+  color: #cc97f0 !important;      /* numbers */
+}
+pre code .kw, pre code .k {
+  color: #630358 !important;      /* keywords */
+  font-weight: bold !important;
+}
+pre code .fu, pre code .nf {
+  color: #ff4ddb !important;      /* functions */
+  font-weight: bold !important;
+}
+
+/* Force ALL text inside output to gray */
+.cell-output pre code,
+.cell-output-stdout pre code,
+.cell-output-display pre code,
+.cell-output pre,
+.cell-output-stdout pre,
+.cell-output-display pre {
+  color: #707070 !important;
+  font-size: 0.8em !important;
+  background-color: #f7f7f7 !important;
+}
+
+/* Override ANSI-colored text (used in console output) */
+.cell-output span[class^="ansi-"] {
+  color: #707070 !important;
+  font-size: 0.8em !important;
+  background-color: #f7f7f7 !important;
+}
+
+/* ============================
+   PINK LINKS – ONLY IN CONTENT
+   ============================ */
+
+/* All links EXCEPT tab buttons */
+main :not(.nav-link) > a {
+  color: #f596ff !important;
+  font-weight: 500 !important;
+  text-decoration: none !important;
+}
+
+main :not(.nav-link) > a:hover {
+  text-decoration: underline !important;
+}
+
+/* ============================
+   CALLOUTS
+   ============================ */
+
+.callout-note, .callout-warning, .callout-tip, .callout-important {
+  padding: 0.5em 0.5em !important;
+  border-left: 5px solid !important;
+  border-radius: 7px !important;
+  margin: 0.5em 0.5 !important;
+  font-size: 1.25em !important;
+}
+
+.callout-note {
+  background: #c5d5fc !important;
+  border-color: #3b72ff !important;
+  color: #111 !important;
+}
+.callout-note strong { color: #1602ad !important; }
+
+.callout-warning {
+  background: #fff8db !important;
+  border-color: #dbb100 !important;
+  color: #453301 !important;
+}
+.callout-warning strong { color: #ffd62b !important; }
+
+.callout-tip {
+  background: #f4eaff !important;
+  border-color: #8e5cd6 !important;
+  color: #2e174d !important;
+}
+.callout-tip strong { color: #5a2ca0 !important; }
+
+.callout-important {
+  background: #ffe6f0 !important;
+  border-color: #ff4da6 !important;
+  color: #4a0e2e !important;
+}
+.callout-important strong { color: #cc0066 !important; }
+
+/* ============================
+   TABLES & IMAGES
+   ============================ */
+
+img {
+  max-width: 100% !important;
+  height: auto !important;
+  display: block !important;
+}
+
+.table-responsive, .datatables {
+  overflow-x: auto !important;
+}
+
+table, .table, table th, table td {
+  font-size: 0.9em !important;
+  color: black !important;
+}
+
+/* ============================
+   DOCUMENT TITLE BANNER (YAML title)
+   ============================ */
+
+/* Style the Quarto title block that is generated from YAML `title:` */
+#title-block-header.quarto-title-block {
+  background: linear-gradient(90deg, #61297b, #3027e1, #791bd8, #d73dc1, #e66e55, #e4a673);
+  padding: 10px 10px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+}
+
+/* Main title text */
+#title-block-header .quarto-title h1.title {
+  color: black;
+  margin: 0;
+  font-size: 2rem;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+}
+
+/* Subtitle, author, date inside the banner */
+#title-block-header .quarto-title .subtitle,
+#title-block-header .quarto-title-meta,
+#title-block-header .quarto-title-meta a {
+  color: #fdfdfd;
+}
+
+#title-block-header .quarto-title .subtitle {
+  margin-top: 0.35rem;
+  font-size: 1.1rem;
+}
+
+#title-block-header .quarto-title-meta {
+  margin-top: 0.5rem;
+  font-size: 0.95rem;
+}
+
+/* Make sure links in title area stay white-ish */
+#title-block-header .quarto-title-meta a:hover {
+  text-decoration: underline;
+}
+
+/* ============================
+   SECTION HEADINGS (H1–H4)
+   ============================ */
+
+/* Only style headings in the main content, not the title banner */
+main h1, main h2, main h3, main h4 {
+  font-weight: 700;
+  letter-spacing: 0.03em;
+}
+
+/* Level 1 section headings WITH gradient background */
+main h1 {
+  background: linear-gradient(90deg, #61297b, #3027e1, #791bd8, #d73dc1, #e66e55, #e4a673);
+  color: white !important;      /* readable over gradients */
+  padding: 10px 14px;
+  border-radius: 10px;
+  margin-top: 2rem;
+  font-weight: 800 !important;
+  letter-spacing: 0.04em;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+/* Level 2 section headings */
+main h2 {
+  background-color: #f0f4ff;
+  padding: 8px 12px;
+  border-radius: 6px;
+  margin-top: 1.8rem;
+}
+
+/* Level 3 section headings */
+main h3 {
+  background-color: #f7f9ff;
+  padding: 6px 10px;
+  border-radius: 4px;
+  margin-top: 1.4rem;
+}
+
+/* Level 4 headings – simpler underline style */
+main h4 {
+  font-size: 1.05rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  border-bottom: 2px solid #e0e4ff;
+  padding-bottom: 4px;
+  margin-top: 1.2rem;
+}
+
+/* ======================================
+   TITLE TEXT BACKGROUND BOX (TRANSPARENT)
+   ====================================== */
+
+/* Box behind ONLY the YAML <h1> title */
+#title-block-header .quarto-title h1.title {
+  background: rgba(255, 255, 255, 0.75);  /* translucent white */
+  padding: 14px 18px;
+  border-radius: 12px;
+  display: inline-block;    /* keeps it as a nicely sized box */
+  backdrop-filter: blur(3px);   /* soft blur for glassy effect */
+}
+
+#title-block-header .quarto-title h1.title {
+  color: black !important;
+  font-weight: 900 !important;
+}
+
+/* ======================================
+   OVERRIDES FOR TITLE METADATA COLORS
+   ====================================== */
+
+/* Labels: "Author" / "Published" */
+#title-block-header .quarto-title-meta .quarto-title-meta-heading {
+  color: lightgrey !important;
+  font-weight: 700;
+}
+
+/* Values: "Keiley Gregory" / "December 1, 2025" */
+#title-block-header .quarto-title-meta .quarto-title-meta-contents,
+#title-block-header .quarto-title-meta .quarto-title-meta-contents p,
+#title-block-header .quarto-title-meta .quarto-title-meta-contents .date {
+  color: #ffffff !important;
+}
