@@ -8,6 +8,8 @@ format:
     css: style.css
     theme: flatly
     highlight-style: tango
+execute:
+  working-directory: none
 ---
 
 Previous studies have established that humpback whale (*Megaptera novaeangliae*) distributions in the Caribbean are distinctly seasonal, with the majority of detections occurring in winter and early spring when this species travels south towards warm, protected waters for the breeding and calving season [@mignuccigiannoni1998]; [@debrot2013]; [@bolaños-jiménez2021]. Marine ecosystems throughout the Caribbean act as primary habitats for a multitude of marine mammal species. The environmental conditions present in areas of high species abundance can provide crucial insight into the relationship between oceanographic and geomorphic conditions and marine mammal spatial distribution patterns. There is a limited availability of recent comprehensive research that characterizes the relationship between marine mammal distributions and oceanographic conditions in the Caribbean, specifically surrounding Puerto Rico (PR) and the Virgin Islands (VI). The currently available knowledge on this topic in the Caribbean is predominately based on survey methods such as sightings and stationary acoustic monitoring devices [@mignuccigiannoni1998]; [@debrot2013]; [@kono-martínez2017]; [@heenehan2019].
@@ -16,11 +18,11 @@ Ocean gliders provide a multitude of advantages for field-based marine mammal re
 
 # Humpback Whale Distributions
 
-*M. novaeangliae* detections were determined through analysis of the low-frequency acoustic data collected by the DMON2 hydrophone over the span of a 19-day TWR G3 Slocum Glider mission (March 6-24, 2025) as it traveled by the shelf edge south of Saint Thomas, U.S. Virgin Islands to the northern coast of Saint Croix, east along the perimeter of the Saint Croix Basin and Saba Bank, and northwest back into the Virgin Islands Basin. The geographic location of the glider at the time of each manually verified humpback vocalization recorded in the acoustic data was interpolated as a point on the mission path line in order to visually and quantitatively analyze trends in species distribution across a variety of habitat types.
+*M. novaeangliae* detections were determined through analysis of the low-frequency acoustic data collected by the DMON2 hydrophone over the span of a 19-day TWR G3 Slocum Glider mission (March 6-24, 2025) as it traveled from the shelf edge south of Saint Thomas, U.S. Virgin Islands to the northern coast of Saint Croix, east along the perimeter of the Saint Croix Basin and Saba Bank, and northwest back into the Virgin Islands Basin (**Fig. 1**). The geographic location of the glider at the time of each manually verified humpback vocalization recorded in the acoustic data was interpolated as a detection point on the mission path line in order to visually and quantitatively analyze trends in species distribution across a variety of habitat types.
 
 ![**Fig. 1.** Map of humpback whale detections during a Slocum Glider mission from March 6-24, 2025 off the coast of the U.S. Virgin Islands. Each of the circular, off-white points represents an individual *M. novaeangliae* detection as determined through acoustic analysis, and the white line represents the glider mission path with each black-outlined segment depicting the period between surfacing events. VIB represents the Virgin Islands Basin and SCB represents the Saint Croix Basin (ArcGIS Pro version 3.3.1).](figures/MES565_FINALMAP.jpg)
 
-During this glider mission, nearly half (42.74%) of the humpback whale detections occurred in ocean basins, consisting a small cluster of detections in the eastern Virgin Islands Basin at the beginning of the mission (n=18), another small cluster along the southern side of the Saint Croix Basin approximately a week after deployment (n=16), and a large, dense cluster (n=78) spanning the edge of the basin where the northeastern tips of the Aves Ridge and Muertos Trough meet. The vast majority of the remaining detections occurred over areas characterized by gradient seafloor morphology, ranging from slopes (29%) with a moderate pitch to escarpments (25.95%) with a severe incline. A very small proportion of the detections occurred in canyons (2.29%; **Fig. 1**; **Table 1**).
+During this glider mission, nearly half (42.74%) of the humpback whale detections occurred in ocean basins, consisting a small cluster of detections in the eastern Virgin Islands Basin at the beginning of the mission (n=18), another small cluster along the far southern side of the Saint Croix Basin approximately a week after deployment (n=16), and a large, dense cluster (n=78) spanning the edge of the basin where the northeastern tips of the Aves Ridge and Muertos Trough meet. The vast majority of the remaining detections occurred over areas characterized by gradient seafloor morphology, ranging from slopes (29%) with a moderate pitch to escarpments (25.95%) with a severe incline (**Fig. 1**; **Table 1**).
 
 ```{r, include=FALSE}
 library(tidyverse)
@@ -117,7 +119,11 @@ seafloor_summary %>%
 
 # Oceanographic Conditions
 
-\*overview of findings for preferred oceanographic conditions
+The majority of the quantitative oceanographic and geomorphic conditions measured in this study exhibited a minimal difference between the values recorded during *M. novaeangliae* detections and those recorded continuously throughout the mission as background environmental settings, with the exception of bathymetric depth and distance to the nearest shoreline (**Table 2**). All three of the oceanographic variables measured by sensors attached to the Slocum glider exhibited sharp density peaks in the background environmental data recorded at certain values (water temperature peak \~27 °C, salinity peak \~36.8 PSU, dissolved oxygen concentration peak \~195 µmol/L). Though the data collected during detections for these variables did exhibit mild increases in density at coinciding values, the overall distributions of measurements was far more balanced across a the plotted range of values during detections than during the overall mission (**Fig. 2**).
+
+The calculated difference in means between the measurements recorded during detections and those recorded continuously throughout the mission indicated that humpback whales preferred moderately deeper areas (mean bathymetric depth = -2,060.25 m) considerably farther from shore (mean distance to shoreline = 39,986.59 m) compared to the overall spatial distribution covered by the glider during the mission (mean depth difference = 113.5255 m shallower, mean distance difference = 5,908.9116 m closer to shore; **Table 2**). Distance to the nearest shoreline was the sole variable that displayed a density peak at a notably different value between the detection and background data, with humpbacks favoring visibly greater distances from shore (peak \~60,000 m) compared to the overall distance of the mission path (peak \~15,000 m). The fairly greater habitat depth recorded in the detection data was reflected in the mildly higher density peak (\~-3,500 m) and lower density peak around (\~-1,500 m) of the detection data compared to the background environmental data (**Fig. 2**). Bathymetric slope deviated minimally between detection and background data in both the calculated difference of means and the trends in density distribution of recorded values (**Table 2**; **Fig. 2**).
+
+This study will continue to conduct and encompass data from additional glider missions spanning a variety of habitat types throughout the northeast Caribbean, providing a far more comprehensive dataset that will provide increased statistical power and allow for spatial and temporal analyses of trends in *M. novaeangliae* distributions between individual missions.
 
 ```{r, include=FALSE}
 # Import *GLIDER* BACKGROUND mission data
@@ -481,6 +487,7 @@ density_COMBINED <- ggplot() +
     axis.ticks.x = element_blank()
   )
 density_COMBINED
-```
 
-future research - study will use data from more missions in different areas, compare findings between missions, overall patterns, blah blah
+# Export plot as PNG
+ggsave("~/MES565_FINALPROJECT/docs/figures/density_plot.png", density_COMBINED, width = 8, height = 6, dpi = 800)
+```
