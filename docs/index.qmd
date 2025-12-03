@@ -10,35 +10,21 @@ format:
     highlight-style: tango
 ---
 
-***COMMAND F \* FOR FIXES***
-
-Humpback whale (*Megaptera novaeangliae*)
-
-short background on:
-
-how audio recorded by DMON2 and glider mission path
-
-acoustic analysis in LFDCS and manual verification
-
-raster calculations in arc pro
-
-All quantitative oceanographic variables, including those measured directly by sensors on the glider (water temperature, salinity, dissolved oxygen concentration) and those calculated in ArcGIS Pro (bathymetric depth, bathymetric slope, distance to nearest shoreline), ...
-
-future research - study will use data from more missions in different areas, compare findings between missions, overall patterns, blah blah
-
-k
-
 Previous studies have established that humpback whale (*Megaptera novaeangliae*) distributions in the Caribbean are distinctly seasonal, with the majority of detections occurring in winter and early spring when this species travels south towards warm, protected waters for the breeding and calving season [@mignuccigiannoni1998]; [@debrot2013]; [@bolaños-jiménez2021]. Marine ecosystems throughout the Caribbean act as primary habitats for a multitude of marine mammal species. The environmental conditions present in areas of high species abundance can provide crucial insight into the relationship between oceanographic and geomorphic conditions and marine mammal spatial distribution patterns. There is a limited availability of recent comprehensive research that characterizes the relationship between marine mammal distributions and oceanographic conditions in the Caribbean, specifically surrounding Puerto Rico (PR) and the Virgin Islands (VI). The currently available knowledge on this topic in the Caribbean is predominately based on survey methods such as sightings and stationary acoustic monitoring devices [@mignuccigiannoni1998]; [@debrot2013]; [@kono-martínez2017]; [@heenehan2019].
 
 Ocean gliders provide a multitude of advantages for field-based marine mammal research, including continuous data collection capabilities that are not constrained by spatial, weather-related, or human safety limitations [@wall2017]; [@baumgartner2020]. The research discussed in this document is part of an on-going study using autonomous underwater Teledyne Webb Research (TWR) G3 Slocum gliders equipped with DMON2 passive acoustic monitoring (PAM) technology and various oceanographic sensors to expand the current understanding of the mechanisms driving the multifaceted relationship between environmental conditions and cetacean distribution and habitat use patterns in the Caribbean.
 
-------------------------------------------------------------------------
-
 # Humpback Whale Distributions
 
-*M. novaeangliae* detections were determined through analysis of the low-frequency acoustic data collected by the DMON2 hydrophone over the span of a 19-day TWR G3 Slocum Glider mission (March 6-24, 2025) as it traveled by the shelf edge south of Saint Thomas, U.S. Virgin Islands to the northern coast of Saint Croix, east along the perimeter of the Saint Croix Basin and Saba Bank, and northwest back into the Virgin Islands Basin. The geographic location of the glider at the time of each manually verified humpback vocalization recorded in the acoustic data was interpolated as a point on the mission path line in order to visually and quantitatively analyze trends in species distribution across a variety of habitat types (**Fig. 1**).
+*M. novaeangliae* detections were determined through analysis of the low-frequency acoustic data collected by the DMON2 hydrophone over the span of a 19-day TWR G3 Slocum Glider mission (March 6-24, 2025) as it traveled by the shelf edge south of Saint Thomas, U.S. Virgin Islands to the northern coast of Saint Croix, east along the perimeter of the Saint Croix Basin and Saba Bank, and northwest back into the Virgin Islands Basin. The geographic location of the glider at the time of each manually verified humpback vocalization recorded in the acoustic data was interpolated as a point on the mission path line in order to visually and quantitatively analyze trends in species distribution across a variety of habitat types.
 
-![**Fig. 1.** Map of humpback whale detections during a Slocum Glider mission from March 6-24, 2025 off the coast of the U.S. Virgin Islands. Each of the circular, off-white points represents an individual *M. novaeangliae* detection as determined through acoustic analysis, and the white line represents the glider mission path with each black-outlined segment depicting the period between surfacing events.](figures/MAPFINAL_AroundSTX2025_layout.jpg)
+![**Fig. 1.** Map of humpback whale detections during a Slocum Glider mission from March 6-24, 2025 off the coast of the U.S. Virgin Islands. Each of the circular, off-white points represents an individual *M. novaeangliae* detection as determined through acoustic analysis, and the white line represents the glider mission path with each black-outlined segment depicting the period between surfacing events. VIB represents the Virgin Islands Basin and SCB represents the Saint Croix Basin.](figures/MAPFINAL_AroundSTX2025_layout.jpg)
+
+During this glider mission, nearly half (42.74%) of humpback whale detections occurred in ocean basins, consisting a small cluster of detections in the eastern Virgin Islands Basin at the beginning of the mission (n=18), another small cluster along the southern side of the Saint Croix Basin approximately a week after deployment (n=16), and a large, dense cluster (n=78) spanning the edge of the basin where the northeastern tips of the Aves Ridge and Muertos Trough meet (**Fig. 1**; **Table 1**). **\*\*WHAT THIS MEANS ECOLOGICALLY FOR HUMPBACK HABITAT USE AND DISTRIBUTION PREFERENCES\*\***
+
+The vast majority of the remaining detections occurred over areas characterized by gradient seafloor morphology, ranging from slopes with a moderate pitch (29%) to escarpments with a severe incline (25.95%). A very small proportion of the detections occurred in canyons (2.29%; **Fig. 1**; **Table 1**).
+
+morphological characteristics of the seafloor where the remaining detections occurred with gradient sea
 
 ```{r, include=FALSE}
 library(tidyverse)
@@ -136,14 +122,6 @@ seafloor_summary %>%
 # Oceanographic Conditions
 
 \*overview of findings for preferred oceanographic conditions
-
-```{r, include=FALSE}
-library(tidyverse)
-library(ggridges)  # for ridge plots
-library(patchwork) # optional, for combining plots
-library(knitr)
-library(kableExtra) # optional but makes it prettier
-```
 
 ```{r, include=FALSE}
 # Import *GLIDER* BACKGROUND mission data
@@ -348,11 +326,15 @@ summary_table <- join_summary %>%
 write_csv(summary_table, "data/output_summary_tables/summary_table.csv")
 ```
 
-**Table 2.** \*WRITE CAPTION
-
 ```{r, echo=FALSE}
 summary_table %>%
-  kable(format = "html", digits = 2, align = "l") %>%
+  kable(
+    format = "html",
+    escape = FALSE,
+    caption = "<b>Table 2.</b> Summary table of descriptive statistics calculated for each of the oceanographic variables measured during the glider mission. The mean, standard error of the mean (SEM), standard deviation (SD), minimum, and maximum values were calculated from variable measurements recorded during <i>M. novaeangliae</i> detections (columns 2-5). The mean of variable measurements recorded continuously throughout the 19-day mission (column 6) and the difference between the means of oceanographic variables recorded during detections versus continuously (column 7) were also computed to provide context on how the oceanographic conditions present during species detections were influenced by the overall environmental setting of the mission.",
+    digits = 2, 
+    align = "l"
+    ) %>%
   kable_styling(full_width = FALSE, bootstrap_options = c("striped", "hover"))
 ```
 
@@ -458,8 +440,9 @@ background_long <- bind_rows(gld_long, arc) %>%
   filter(!is.na(Value))  # drop non-finite values
 ```
 
-```{r, echo=FALSE}
-# Faceted desnity plot
+```{r density-combined, echo=FALSE, fig.cap="**Fig. 2.** Density distributions of oceanographic variable conditions throughout the March 2025 glider mission. The colored distribution curves in each variable plot represent the conditions measured during *M. novaeangliae* detections. The gray distribution curves represent the overall background conditions recorded continuously throughout the 19-day mission, allowing for the interpretation of how trends in the oceanographic conditions recorded during *M. novaeangliae* detections were influenced by the overall environmental setting of the mission."}
+
+# Faceted density plot
 density_COMBINED <- ggplot() +
   # BACKGROUND density (grey)
   geom_density(data = background_long, 
@@ -504,4 +487,4 @@ density_COMBINED <- ggplot() +
 density_COMBINED
 ```
 
-**Fig. 3.** \*WRITE CAPTION
+future research - study will use data from more missions in different areas, compare findings between missions, overall patterns, blah blah
