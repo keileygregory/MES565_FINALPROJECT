@@ -48,7 +48,6 @@ RASTERDEPTH <- Bathymetric_Depth %>%
     RASTERDEPTH_m = grid_code
     )
 
-
 # Bathymetric Slope (°) --------------------------------------------------------
 Bathymetric_Slope <- read_csv("THESIS_DATA/arcgispro_exportedcsvs/GBC15a_slopeSTX2025_POINTS_DD.csv")
 
@@ -90,28 +89,19 @@ arc_long <- bind_rows(
     )
 )
 
+arc_long <- arc_long %>%
+  rename(Oceanographic_Variable = Variable)
 
-
-
-
-
-
-# Create BACKGROUND summary table dataframe
-summary <- combined_df %>%
-  select("RASTERDEPTH_m", "RASTERSLOPE_deg", "NEAR_DIST_m") %>%
-  pivot_longer(
-    cols = everything(),
-    names_to  = "Oceanographic_Variable",
-    values_to = "Value"
-  ) %>%
+# Create **ARC** BACKGROUND summary table dataframe
+arc_summary <- arc_long %>%
   group_by(Oceanographic_Variable) %>%
   summarise(
-    n     = sum(!is.na(Value)),
-    Mean  = mean(Value, na.rm = TRUE),
-    SEM   = sd(Value, na.rm = TRUE) / sqrt(n),
-    SD    = sd(Value, na.rm = TRUE),
-    Min   = min(Value, na.rm = TRUE),
-    Max   = max(Value, na.rm = TRUE),
+    n    = sum(!is.na(Value)),
+    Mean = mean(Value, na.rm = TRUE),
+    SEM  = sd(Value, na.rm = TRUE) / sqrt(n),
+    SD   = sd(Value, na.rm = TRUE),
+    Min  = min(Value, na.rm = TRUE),
+    Max  = max(Value, na.rm = TRUE),
     .groups = "drop"
   ) %>%
   mutate(
@@ -122,3 +112,24 @@ summary <- combined_df %>%
       TRUE ~ Oceanographic_Variable
     )
   )
+
+
+
+
+# Reorder rows for table
+hbk_summary <- hbk_summary %>%
+  mutate(
+    Oceanographic_Variable = factor(Oceanographic_Variable,
+                                    levels = c(
+                                      "Glider Depth (m)",
+                                      "Water Temperature (°C)",
+                                      "Salinity (PSU)",
+                                      "Dissolved Oxygen Concentration (µmol/L)",
+                                      "Bathymetric Depth (m)",
+                                      "Bathymetric Slope (°)",
+                                      "Distance to Nearest Shoreline (m)"
+                                    )
+    )
+  ) %>%
+  arrange(Oceanographic_Variable)
+

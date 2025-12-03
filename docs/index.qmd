@@ -159,7 +159,8 @@ write_csv(bkg_summary, "data/output_summary_tables/bkg_summary.csv")
 ```
 
 ```{r, include=FALSE}
-# Join hbk detection and bkg background mission summaries by Oceanographic_Variable col
+# ❌❌❌❌❌❌❌❌❌ (env_var
+# Join hbk detection and bkg + arc background mission summaries by Oceanographic_Variable col
 join_summary <- hbk_summary %>%
   left_join(bkg_summary %>% 
               select(
