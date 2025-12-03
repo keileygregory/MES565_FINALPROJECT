@@ -39,7 +39,7 @@ NEARDIST <- Distance_to_Nearest_Shoreline %>%
     )
 
 # Bathymetric Depth (m) --------------------------------------------------------
-Bathymetric_Depth <- read_csv("thesis_data/ARCGIS_background_conditions/arcgispro_exportedcsvs/GBC15a_bathySTX2025_POINTS_DD.csv")
+Bathymetric_Depth <- read_csv("thesis_data/ARCGIS_background_conditions/arcgispro_exportedcsvs/PATH_GBC15a_bathySTX2025_POINTS_DD.csv")
 
 RASTERDEPTH <- Bathymetric_Depth %>%
   select(
