@@ -52,7 +52,7 @@ RASTERDEPTH <- Bathymetric_Depth %>%
     )
 
 # Bathymetric Slope (°) --------------------------------------------------------
-Bathymetric_Slope <- read_csv("thesis_data/ARCGIS_background_conditions/arcgispro_exportedcsvs/GBC15a_slopeSTX2025_POINTS_DD.csv")
+Bathymetric_Slope <- read_csv("thesis_data/ARCGIS_background_conditions/arcgispro_exportedcsvs/PATH_GBC15a_slopeSTX2025_POINTS_DD.csv")
 
 RASTERSLOPE <- Bathymetric_Slope %>%
   select(
