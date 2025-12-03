@@ -44,10 +44,6 @@ short overview of findings from map (where detections clustered, geomorph type, 
 
 \*link to interactive map
 
-# Oceanographic Conditions
-
-overview of findings for preferred oceanographic conditions
-
 ```{r, include=FALSE}
 library(tidyverse)
 library(ggridges)  # for ridge plots
@@ -60,6 +56,94 @@ library(kableExtra) # optional but makes it prettier
 # Import humpback DETECTION data with GIS calculations
 hbk <- read_csv("data/GISCALC_HUWH_AroundSTX2025.csv")
 
+# Rename NEAR_DIST col to match arc background dataframe
+hbk <- hbk %>%
+  rename(NEAR_DIST_m = NEAR_DIST)
+
+# Create df for seafloor morphology data
+seafloor <- hbk %>%
+  select(datetime_UTC, datetime_AST, Latitude, Longitude, Primary_Seafloor_Feature, Seafloor_Morphology, RASTERDEPTH_m, RASTERSLOPE_deg, NEAR_DIST_m, Nearest_Shoreline)
+```
+
+```{r, include=FALSE}
+# Print list of all unique values in Primary_Seafloor_Feature col
+print(unique(seafloor$Primary_Seafloor_Feature))
+# "Basin" ~ "Basin (near bottom of canyon)" ~ "Saint Croix Basin" ~ "Virgin Islands Basin"    
+# "Escarpment" ~ "Escarpment (near Saba Bank)"                  
+# "Slope" ~ "Slope (near Saba Bank)"                     
+# "Canyon"
+
+# Count number of rows with each seafloor morphology type (*use partial matching (e.g., anything containing “Basin”))
+n_basin <- nrow(seafloor %>% filter(str_detect(Primary_Seafloor_Feature, "Basin"))) # n = 112
+n_escarp <- nrow(seafloor %>% filter(str_detect(Primary_Seafloor_Feature, "Escarpment"))) # n = 68
+n_slope <- nrow(seafloor %>% filter(str_detect(Primary_Seafloor_Feature, "Slope"))) # n = 76
+# DONT use  partial matching for canyon so doesn't pick up "Basin (near bottom of canyon)"
+n_canyon <- nrow(seafloor %>% filter(Primary_Seafloor_Feature == "Canyon")) # n = 6
+# total n = 262 = perfect yay
+
+# Count detections by specific Basin types
+n_vib <- nrow(seafloor %>% filter(Primary_Seafloor_Feature == "Virgin Islands Basin")) # n = 18
+n_scb <- nrow(seafloor %>% filter(Primary_Seafloor_Feature == "Saint Croix Basin"))    # n = 16
+```
+
+```{r, include=FALSE}
+# Values
+vib_label <- "Virgin Islands Basin"
+scb_label <- "Saint Croix Basin"
+
+# Build styled tibble manually
+seafloor_summary <- tibble(
+  Feature = c(
+    "Basin",
+    cell_spec(vib_label, "html", extra_css = "font-size:80%; padding-left:20px;"),
+    cell_spec(scb_label, "html", extra_css = "font-size:80%; padding-left:20px;"),
+    "Slope",
+    "Escarpment",
+    "Canyon"
+  ),
+  Detections = c(
+    112,
+    cell_spec(18, "html", extra_css = "font-size:80%"),
+    cell_spec(16, "html", extra_css = "font-size:80%"),
+    76,
+    68,
+    6
+  ),
+  Percent = c(
+    37.84,
+    cell_spec(6.08, "html", extra_css = "font-size:80%"),
+    cell_spec(5.41, "html", extra_css = "font-size:80%"),
+    25.68,
+    22.97,
+    2.03
+  )
+)
+```
+
+**Table 1.** \*WRITE CAPTION
+
+```{r, echo=FALSE}
+# Render with escape = FALSE so inline HTML is rendered
+seafloor_summary %>%
+  kable("html", escape = FALSE,
+        col.names = c("Seafloor Morphology Type", "Number of Humpback Whale Detections (n)", "Percent of Total Detections (%)"),
+        align = "l") %>%
+  kable_styling(full_width = FALSE, bootstrap_options = c("striped", "hover"))
+```
+
+# Oceanographic Conditions
+
+\*overview of findings for preferred oceanographic conditions
+
+```{r, include=FALSE}
+library(tidyverse)
+library(ggridges)  # for ridge plots
+library(patchwork) # optional, for combining plots
+library(knitr)
+library(kableExtra) # optional but makes it prettier
+```
+
+```{r, include=FALSE}
 # Import *GLIDER* BACKGROUND mission data
 gld <- read_csv("data/erddap_UVI2_Around_STX_20250306.csv")
 
@@ -68,10 +152,6 @@ arc <- read_csv("data/arcgis_UVI2_Around_STX_20250306.csv")
 ```
 
 ```{r, include=FALSE}
-# Rename NEAR_DIST col to match arc background dataframe
-hbk <- hbk %>%
-  rename(NEAR_DIST_m = NEAR_DIST)
-
 # Create DETECTIONS summary table dataframe
 hbk_summary <- hbk %>%
   select("Glider_depth_m", "Water_temperature_C", "Salinity_PSU", "Oxygen_concentration_µmol_L", "RASTERDEPTH_m", "RASTERSLOPE_deg", "NEAR_DIST_m") %>%
@@ -266,11 +346,11 @@ summary_table <- join_summary %>%
 write_csv(summary_table, "data/output_summary_tables/summary_table.csv")
 ```
 
-**Table 1.** \*WRITE CAPTION
+**Table 2.** \*WRITE CAPTION
 
 ```{r, echo=FALSE}
-summary_table |>
-  kable(format = "html", digits = 2, align = "l") |>
+summary_table %>%
+  kable(format = "html", digits = 2, align = "l") %>%
   kable_styling(full_width = FALSE, bootstrap_options = c("striped", "hover"))
 ```
 
@@ -377,59 +457,6 @@ background_long <- bind_rows(gld_long, arc) %>%
 ```
 
 ```{r, echo=FALSE}
-# Explicitly define order of boxes in each plot (detections on left, background on right)
-hbk_long$boxorder <- factor("Detection", levels = c("Detection", "Background"))
-background_long$boxorder <- factor("Background", levels = c("Detection", "Background"))
-
-# Facted box plot
-boxplot_COMBINED <- ggplot() +
-# DETECTION box (colors by variable, keep outliers)
-  geom_boxplot(data = hbk_long, aes(x = boxorder, y = Value, fill = Oceanographic_Variable, color = Oceanographic_Variable),
-               width = 0.9,
-               alpha = 0.45,
-               outlier.alpha = 0.7,
-               outlier.size = 1.5,
-               position = position_nudge(x = -0.01)  # shift box slightly left
- ) +
-  # BACKGROUND box (all grey, remove outliers)
-  geom_boxplot(data = background_long, aes(x = boxorder, y = Value),
-               fill = "grey80",
-               color = "grey40",
-               width = 0.9,
-               alpha = 0.45,
-               outlier.alpha = 0.7,
-               outlier.size = 1.5,
-               position = position_nudge(x = 0.01)  # shift box slightly right
- ) + 
-  facet_wrap(
-    ~ Oceanographic_Variable,
-    scales = "free_y",
-    ncol = 3,
-    labeller = labeller(Oceanographic_Variable = function(x)
-      stringr::str_wrap(clean_var_names[x], width = 18))
- ) + 
-  scale_fill_manual(values = custom_colors, guide = "none") +
-  scale_color_manual(values = custom_colors, guide = "none") +
-  labs(
-    x = NULL,
-    y = "Value"
-  ) +
-  theme_minimal(base_size = 10) +
-  theme(
-    text = element_text(color = "black"),
-    strip.text = element_text(color = "black", face = "bold", size = 11),
-    axis.text = element_text(color = "black"),
-    axis.title = element_text(color = "black"),
-    axis.title.y = element_text(face = "bold", size = 10, margin = margin(r = 5)),  # bold y-axis title; r = 5 means y axis label 5 pts away from axis value labels
-    axis.text.x = element_text(face = "plain"),  # unbold x-axis labels
-    axis.ticks.x = element_blank(),  # remove the tick marks on the x-axis
-  )
-boxplot_COMBINED
-```
-
-**Fig. 2.** \*WRITE CAPTION
-
-```{r, echo=FALSE}
 # Faceted desnity plot
 density_COMBINED <- ggplot() +
   # BACKGROUND density (grey)
@@ -476,41 +503,3 @@ density_COMBINED
 ```
 
 **Fig. 3.** \*WRITE CAPTION
-
-k
-
-```{r, include=FALSE}
-# Create df for seafloor morphology data
-seafloor <- hbk %>%
-  filter(!is.na(Seafloor_Morphology)) %>%
-  select(datetime_UTC, datetime_AST, Latitude, Longitude, Seafloor_Morphology, Glider_depth_m, Salinity_PSU, Oxygen_concentration_µmol_L, RASTERDEPTH_m, RASTERSLOPE_deg, NEAR_DIST_m, Nearest_Shoreline)
-
-# Print list of all unique values in Seafloor_Morphology col
-print(unique(seafloor$Seafloor_Morphology))
-#  [1] "Abyss; Abyssal mountain; Basin (large); Escarpment; Trough"  
-    # 
-#  [2] "Abyss; Abyssal mountain; Basin (large); Trough"                       
-#  [3] "Escarpment; Slope"                                                    
-#  [4] "Abyss; Abyssal mountain; Escarpment"                                  
-#  [5] "Basin (large); Escarpment; Slope"                                     
-#  [6] "Slope"                                                                
-#  [7] "Slope; Terrace"                                                       
-#  [8] "Abyss; Abyssal mountain; Basin (large); Rise"                         
-#  [9] "Abyss; Abyssal mountain; Basin (large); Canyon (shelf incising); Rise"
-# [10] "Abyss; Abyssal mountain; Basin (large); Escarpment; Rise"             
-# [11] "Abyss; Abyssal mountain; Canyon (shelf incising); Escarpment; Rise"   
-# [12] "Canyon (blind); Escarpment; Slope"                                    
-# [13] "Basin (large); Escarpment; Slope; Trough"
-
-# Basin (abyss)
-# Escarpment
-# Trough
-# Slope
-# Terrace
-# Rise
-# Canyon
-
-# Abyss = Basin (an ocean basin refers to the entire large depression that holds ocean water, while the abyssal plain (or abyss) is a specific, very flat, deep region within that basin)
-
-
-```
