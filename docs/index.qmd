@@ -28,21 +28,17 @@ future research - study will use data from more missions in different areas, com
 
 k
 
-Previous studies have established that humpback whale (*Megaptera novaeangliae*) distributions in the Caribbean are distinctly seasonal, with the majority of detections occurring in winter and early spring when this species travels south towards warm, protected waters for the breeding and calving season [@mignuccigiannoni1998].
+Previous studies have established that humpback whale (*Megaptera novaeangliae*) distributions in the Caribbean are distinctly seasonal, with the majority of detections occurring in winter and early spring when this species travels south towards warm, protected waters for the breeding and calving season [@mignuccigiannoni1998]; [@debrot2013]; [@bolaños-jiménez2021]. Marine ecosystems throughout the Caribbean act as primary habitats for a multitude of marine mammal species. The environmental conditions present in areas of high species abundance can provide crucial insight into the relationship between oceanographic and geomorphic conditions and marine mammal spatial distribution patterns. There is a limited availability of recent comprehensive research that characterizes the relationship between marine mammal distributions and oceanographic conditions in the Caribbean, specifically surrounding Puerto Rico (PR) and the Virgin Islands (VI). The currently available knowledge on this topic in the Caribbean is predominately based on survey methods such as sightings and stationary acoustic monitoring devices [@mignuccigiannoni1998]; [@debrot2013]; [@kono-martínez2017]; [@heenehan2019].
 
-Debrot et al., 2013; Bolaños-Jiménez et al., 2021).
+Ocean gliders provide a multitude of advantages for field-based marine mammal research, including continuous data collection capabilities that are not constrained by spatial, weather-related, or human safety limitations [@wall2017]; [@baumgartner2020]. The research discussed in this document is part of an on-going study using autonomous underwater Teledyne Webb Research (TWR) G3 Slocum gliders equipped with DMON2 passive acoustic monitoring (PAM) technology and various oceanographic sensors to expand the current understanding of the mechanisms driving the multifaceted relationship between environmental conditions and cetacean distribution and habitat use patterns in the Caribbean.
 
 ------------------------------------------------------------------------
 
 # Humpback Whale Distributions
 
-short overview of findings from map (where detections clustered, geomorph type, etc.)
+*M. novaeangliae* detections were determined through analysis of the low-frequency acoustic data collected by the DMON2 hydrophone over the span of a 19-day TWR G3 Slocum Glider mission (March 6-24, 2025) as it traveled by the shelf edge south of Saint Thomas, U.S. Virgin Islands to the northern coast of Saint Croix, east along the perimeter of the Saint Croix Basin and Saba Bank, and northwest back into the Virgin Islands Basin. The geographic location of the glider at the time of each manually verified humpback vocalization recorded in the acoustic data was interpolated as a point on the mission path line in order to visually and quantitatively analyze trends in species distribution across a variety of habitat types (**Fig. 1**).
 
-![](figures/MAPFINAL_AroundSTX2025_layout.jpg)
-
-**Fig. 1.** \*WRITE CAPTION
-
-\*link to interactive map
+![**Fig. 1.** Map of humpback whale detections during a Slocum Glider mission from March 6-24, 2025 off the coast of the U.S. Virgin Islands. Each of the circular, off-white points represents an individual *M. novaeangliae* detection as determined through acoustic analysis, and the white line represents the glider mission path with each black-outlined segment depicting the period between surfacing events.](figures/MAPFINAL_AroundSTX2025_layout.jpg)
 
 ```{r, include=FALSE}
 library(tidyverse)
@@ -74,11 +70,11 @@ print(unique(seafloor$Primary_Seafloor_Feature))
 # "Canyon"
 
 # Count number of rows with each seafloor morphology type (*use partial matching (e.g., anything containing “Basin”))
-n_basin <- nrow(seafloor %>% filter(str_detect(Primary_Seafloor_Feature, "Basin"))) # n = 112
-n_escarp <- nrow(seafloor %>% filter(str_detect(Primary_Seafloor_Feature, "Escarpment"))) # n = 68
-n_slope <- nrow(seafloor %>% filter(str_detect(Primary_Seafloor_Feature, "Slope"))) # n = 76
-# DONT use  partial matching for canyon so doesn't pick up "Basin (near bottom of canyon)"
-n_canyon <- nrow(seafloor %>% filter(Primary_Seafloor_Feature == "Canyon")) # n = 6
+nrow(seafloor %>% filter(str_detect(Primary_Seafloor_Feature, "Basin"))) # n = 112
+nrow(seafloor %>% filter(str_detect(Primary_Seafloor_Feature, "Escarpment"))) # n = 68
+nrow(seafloor %>% filter(str_detect(Primary_Seafloor_Feature, "Slope"))) # n = 76
+# *DONT* use  partial matching for canyon so doesn't pick up "Basin (near bottom of canyon)"
+nrow(seafloor %>% filter(Primary_Seafloor_Feature == "Canyon")) # n = 6
 # total n = 262 = perfect yay
 
 # Count detections by specific Basin types
@@ -110,24 +106,30 @@ seafloor_summary <- tibble(
     6
   ),
   Percent = c(
-    37.84,
-    cell_spec(6.08, "html", extra_css = "font-size:80%"),
-    cell_spec(5.41, "html", extra_css = "font-size:80%"),
-    25.68,
-    22.97,
-    2.03
+    42.74,
+    cell_spec(6.87, "html", extra_css = "font-size:80%"),
+    cell_spec(6.11, "html", extra_css = "font-size:80%"),
+    29.00,
+    25.95,
+    2.29
   )
 )
 ```
 
-**Table 1.** \*WRITE CAPTION
-
 ```{r, echo=FALSE}
 # Render with escape = FALSE so inline HTML is rendered
 seafloor_summary %>%
-  kable("html", escape = FALSE,
-        col.names = c("Seafloor Morphology Type", "Number of Humpback Whale Detections (n)", "Percent of Total Detections (%)"),
-        align = "l") %>%
+  kable(
+    format = "html",
+    escape = FALSE,
+    caption = "<b>Table 1.</b> The distribution of <i>M. novaeangliae</i> detections across areas with varying morphological seafloor characteristics during a Slocum glider mission near the U.S. Virgin Islands in March of 2025.",
+    col.names = c(
+      "Seafloor Morphology Type",
+      "Number of Humpback Whale Detections (n)",
+      "Percent of Total Detections (%)"
+    ),
+    align = "l"
+  ) %>%
   kable_styling(full_width = FALSE, bootstrap_options = c("striped", "hover"))
 ```
 

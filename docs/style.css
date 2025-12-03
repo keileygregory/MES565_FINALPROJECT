@@ -279,3 +279,11 @@ main h4 {
 #title-block-header .quarto-title-meta .quarto-title-meta-contents .date {
   color: #ffffff !important;
 }
+
+/* Remove indent on wrapped lines of table captions */
+caption {
+  text-align: left !important;
+  padding-left: 0 !important;
+  margin-left: 0 !important;
+  text-indent: 0 !important;
+}
